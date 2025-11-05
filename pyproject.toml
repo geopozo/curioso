@@ -1,0 +1,7 @@
+[project]
+name = "curioso"
+dynamic=["version"]
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
