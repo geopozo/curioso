@@ -30,7 +30,7 @@ PKG_BINARIES = [
 
 @dataclass
 class OsInfo:
-    """Stub."""
+    """Return OS Platform Info."""
 
     os: str = ""
     kernel: str = ""
@@ -38,8 +38,7 @@ class OsInfo:
     machines: str = ""
 
 
-# step 1: OS
-def detect_os() -> OsInfo:
+def _detect_os() -> OsInfo:
     """Stub."""
     return OsInfo(
         os=platform.system(),
@@ -218,9 +217,9 @@ def ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
 
 
 # orchestrator
-async def get_report() -> dict[str, Any]:
+async def probe() -> dict[str, Any]:
     """Stub."""
-    os_info = detect_os()
+    os_info = _detect_os()
     report: dict[str, Any] = {
         "os": os_info.os,
         "kernel": os_info.kernel,
