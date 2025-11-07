@@ -1,6 +1,7 @@
 """."""
 
 import glob
+import json
 import os
 import platform
 import re
@@ -9,6 +10,8 @@ from pathlib import Path
 from typing import Any
 
 from curioso import _utils
+
+# ruff: noqa: T201 allow print in CLI
 
 PKG_BINARIES = [
     "apt",
@@ -207,23 +210,47 @@ def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
     return LddInfo()
 
 
+@dataclass
+class ReportInfo:
+    """Stub."""
+
+    os: str = ""
+    kernel: str = ""
+    supported: bool = False
+    snap: bool = False
+    flatpak: bool = False
+    distro: dict[str, Any] | None = None
+    package_manager: dict[str, Any] | None = None
+    libc: LibcInfo | None = None
+    ldd_equivalent: LddInfo | None = None
+
+    def to_json(self, *, pretty: bool = False) -> None:
+        """Print report output."""
+        data = {
+            "os": self.os,
+            "kernel": self.kernel,
+            "supported": self.supported,
+            "snap": self.snap,
+            "flatpak": self.flatpak,
+            "distro": self.distro,
+            "package_manager": self.package_manager,
+            "libc": self.libc,
+            "ldd_equivalent": self.ldd_equivalent,
+        }
+        print(json.dumps(data, indent=2 if pretty else None, sort_keys=False))
+
+
 # orchestrator
-async def probe() -> dict[str, Any]:
+async def probe() -> ReportInfo:
     """Stub."""
     os_info = _detect_os()
-    report: dict[str, Any] = {
-        "os": os_info.os,
-        "kernel": os_info.kernel,
-        "supported": os_info.os.lower() == "linux",
-        "snap": False,
-        "flatpak": False,
-        "distro": None,
-        "package_manager": None,
-        "libc": None,
-        "ldd_equivalent": None,
-    }
+    report = ReportInfo(
+        os=os_info.os,
+        kernel=os_info.kernel,
+        supported=os_info.os.lower() == "linux",
+    )
 
-    if not report["supported"]:
+    if not report.supported:
         return report
 
     sb = _detect_sandbox()
