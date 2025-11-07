@@ -122,7 +122,7 @@ class LibcInfo:
     detector: str | None = None
 
 
-def detect_libc() -> LibcInfo:
+async def detect_libc() -> LibcInfo:
     """Stub."""
     linkers = _find_dynamic_linkers()
     sel = linkers[0] if linkers else None
@@ -144,8 +144,8 @@ def detect_libc() -> LibcInfo:
         return m.group(1) if m else ""
 
     if sel:
-        _, out, err = _utils.run_cmd([sel, "---version"])
-        combined = (out + "\n" + err).strip()
+        out, err, _ = await _utils.run_cmd([sel, "---version"])
+        combined = (out.decode() + "\n" + err.decode()).strip()
 
         if "musl" in combined.lower():
             return LibcInfo(
@@ -166,8 +166,8 @@ def detect_libc() -> LibcInfo:
                 detector="ld--version",
             )
 
-        _, out, err = _utils.run_cmd(["ldd", "--version"], executable=sel)
-        combined = (out + "\n" + err).strip()
+        out, err, _ = await _utils.run_cmd(["ldd", "--version"], executable=sel)
+        combined = (out.decode() + "\n" + err.decode()).strip()
         if "musl" in combined.lower():
             return LibcInfo(
                 family="musl",
@@ -217,7 +217,7 @@ def ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
 
 
 # orchestrator
-def collect_min_report() -> dict[str, Any]:
+async def collect_min_report() -> dict[str, Any]:
     """Stub."""
     os_info = detect_os()
     report: dict[str, Any] = {
@@ -256,7 +256,7 @@ def collect_min_report() -> dict[str, Any]:
     report["distro"] = pm
 
     # libc + linker
-    libc = detect_libc()
+    libc = await detect_libc()
     report["libc"] = libc
 
     # ldd equivalent using linker

@@ -1,27 +1,20 @@
+import asyncio
 import shutil
 import subprocess
 
 
-def run_cmd(
-    argv: list[str],
-    timeout: int = 6,
+async def run_cmd(
+    commands: list[str],
     executable: str | None = None,
-) -> tuple[int, str, str]:
-    try:
-        p = subprocess.run(  # noqa: S603, UP022
-            argv,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
-            timeout=timeout,
-            executable=executable,
-        )
-        return p.returncode, p.stdout.strip(), p.stderr.strip()
-    except FileNotFoundError:
-        return 127, "", f"{executable or argv[0]}: not found"
-    except subprocess.TimeoutExpired:
-        return 124, "", "timeout"
+) -> tuple[bytes, bytes, int | None]:
+    proc = await asyncio.create_subprocess_exec(
+        *commands,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        executable=executable,
+    )
+    stdout, stderr = await proc.communicate()
+    return stdout, stderr, proc.returncode
 
 
 def which_any(names: list[str]) -> list[str]:
