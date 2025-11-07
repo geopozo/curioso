@@ -21,10 +21,11 @@ authors = [
 maintainers = [{ name = "Andrew Pikul", email = "ajpikul@gmail.com" }]
 dependencies = []
 
+[project.scripts]
+curioso = "curioso._cli:run_cli"
+
 [dependency-groups]
-dev = [
-    "pyright>=1.1.407",
-]
+dev = ["pyright>=1.1.407"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -49,9 +50,9 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-  "D",      # ignore docstring errors
-  "S101",   # allow assert
-  "INP001", # no need for __init__ in test directories
+    "D",      # ignore docstring errors
+    "S101",   # allow assert
+    "INP001", # no need for __init__ in test directories
 ]
 
 [tool.pyright]
