@@ -39,7 +39,6 @@ class OsInfo:
 
 
 def _detect_os() -> OsInfo:
-    """Stub."""
     return OsInfo(
         os=platform.system(),
         kernel=platform.release(),
@@ -48,9 +47,7 @@ def _detect_os() -> OsInfo:
     )
 
 
-# step 2: Snap / Flatpak
-def detect_sandbox() -> dict[str, bool]:
-    """Stub."""
+def _detect_sandbox() -> dict[str, bool]:
     snap = bool(os.environ.get("SNAP") or os.environ.get("SNAP_NAME"))
     flatpak = bool(
         os.environ.get("FLATPAK_ID")
@@ -60,9 +57,7 @@ def detect_sandbox() -> dict[str, bool]:
     return {"snap": snap, "flatpak": flatpak}
 
 
-# step 3: Distro:
-def parse_os_release() -> dict[str, str]:
-    """Stub."""
+def _parse_os_release() -> dict[str, str]:
     for _p in ("/etc/os-release", "/usr/lib/os-release"):
         if (p := Path(_p)).exists():
             lines = p.read_text(errors="ignore").splitlines()
@@ -74,9 +69,7 @@ def parse_os_release() -> dict[str, str]:
     raise FileNotFoundError("")
 
 
-# step 4: Package manager
-def choose_package_manager() -> dict[str, Any]:
-    """Stub."""
+def _choose_package_manager() -> dict[str, Any]:
     available_bins = _utils.which_any(PKG_BINARIES)
     available_names = [Path(p).resolve() for p in available_bins]
 
@@ -122,8 +115,7 @@ class LibcInfo:
     detector: str | None = None
 
 
-async def detect_libc() -> LibcInfo:
-    """Stub."""
+async def _detect_libc() -> LibcInfo:
     linkers = _find_dynamic_linkers()
     sel = linkers[0] if linkers else None
 
@@ -195,8 +187,7 @@ class LddInfo:
 
 
 # Step 6: determine "ldd" via the linker
-def ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
-    """Stub."""
+def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
     if not linker:
         return LddInfo()
 
@@ -235,13 +226,11 @@ async def probe() -> dict[str, Any]:
     if not report["supported"]:
         return report
 
-    # Snap/Flatpak
-    sb = detect_sandbox()
-    report["snap"] = sb.get("snap")
-    report["flatpak"] = sb.get("flatpak")
+    sb = _detect_sandbox()
+    report.snap = sb.get("snap", False)
+    report.flatpak = sb.get("flatpak", False)
 
-    # Distro
-    osr = parse_os_release()
+    osr = _parse_os_release()
     distro = {
         "id": osr.get("ID"),
         "name": osr.get("NAME"),
@@ -249,14 +238,11 @@ async def probe() -> dict[str, Any]:
         "pretty_name": osr.get("PRETTY_NAME"),
         "id_like": osr.get("ID_LIKE"),
     }
-    report["distro"] = distro
-    report["package_manager"] = choose_package_manager()
 
-    # libc + linker
-    libc = await detect_libc()
-    report["libc"] = libc
-
-    # ldd equivalent using linker
-    report["ldd_equivalent"] = ldd_equivalent(libc.family, libc.selected_linker)
+    report.distro = distro
+    report.package_manager = _choose_package_manager()
+    libc = await _detect_libc()
+    report.libc = libc
+    report.ldd_equivalent = _ldd_equivalent(libc.family, libc.selected_linker)
 
     return report
