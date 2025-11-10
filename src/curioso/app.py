@@ -98,6 +98,15 @@ class LibcInfo:
     selected_linker: str = ""
     detector: str | None = None
 
+    def __json__(self):
+        """Convert to json."""
+        return {
+            "family": self.family,
+            "version": self.version,
+            "selected_linker": self.selected_linker,
+            "detector": self.detector,
+        }
+
 
 async def _detect_libc() -> LibcInfo:
     linkers = _find_dynamic_linkers()
