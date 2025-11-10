@@ -41,18 +41,6 @@ def _detect_sandbox() -> dict[str, bool]:
     return {"snap": snap, "flatpak": flatpak}
 
 
-def _parse_os_release() -> dict[str, str]:
-    for _p in ("/etc/os-release", "/usr/lib/os-release"):
-        if (p := Path(_p)).exists():
-            lines = p.read_text(errors="ignore").splitlines()
-            # Process into dict this text format:
-            # KEY="VALUE"  # noqa: ERA001
-            # KEY2="VALUE2"  # noqa: ERA001
-            # ...
-            return {k: v[1:-2] for line in lines for k, v in line.split("=")}
-    raise FileNotFoundError("")
-
-
 def _choose_package_manager() -> dict[str, Any]:
     available_bins = _utils.which_any(PKG_BINARIES)
     available_names = [Path(p).resolve() for p in available_bins]
@@ -257,19 +245,18 @@ async def probe() -> ReportInfo:
     report.snap = sb.get("snap", False)
     report.flatpak = sb.get("flatpak", False)
 
-    osr = _parse_os_release()
-    distro = {
+    osr = platform.freedesktop_os_release()
+    report.distro = {
         "id": osr.get("ID"),
         "name": osr.get("NAME"),
         "version_id": osr.get("VERSION_ID"),
         "pretty_name": osr.get("PRETTY_NAME"),
         "id_like": osr.get("ID_LIKE"),
     }
-
-    report.distro = distro
-    report.package_manager = _choose_package_manager()
-    libc = await _detect_libc()
-    report.libc = libc
-    report.ldd_equivalent = _ldd_equivalent(libc.family, libc.selected_linker)
+    report.libc = await _detect_libc()
+    report.ldd_equivalent = _ldd_equivalent(
+        report.libc.family,
+        report.libc.selected_linker,
+    )
 
     return report
