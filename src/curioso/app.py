@@ -48,7 +48,6 @@ def _choose_package_manager() -> dict[str, list[str]]:
     raise FileNotFoundError("No package manager found")
 
 
-# step 5: libc + linker
 def _find_dynamic_linkers() -> list[str]:
     patterns = [
         "/lib*/ld-linux*.so*",
@@ -172,7 +171,6 @@ class LddInfo:
         }
 
 
-# Step 6: determine "ldd" via the linker
 def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
     if not linker:
         return LddInfo()
@@ -223,7 +221,6 @@ class ReportInfo:
         }
 
 
-# orchestrator
 async def probe() -> ReportInfo:
     """Stub."""
     os_name = platform.system()
