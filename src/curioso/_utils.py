@@ -1,6 +1,14 @@
 import asyncio
+import json
 import shutil
 import subprocess
+
+
+class AutoEncoder(json.JSONEncoder):
+    def default(self, o):
+        if hasattr(o, "__json__"):
+            return o.__json__()
+        return super().default(o)
 
 
 async def run_cmd(
