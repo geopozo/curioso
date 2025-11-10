@@ -178,6 +178,14 @@ class LddInfo:
     cmd_template: list[str] | None = None
     executable: str | None = None
 
+    def __json__(self):
+        """Convert to json."""
+        return {
+            "method": self.method,
+            "cmd_template": self.cmd_template,
+            "executable": self.executable,
+        }
+
 
 # Step 6: determine "ldd" via the linker
 def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
