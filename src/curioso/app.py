@@ -75,7 +75,7 @@ def _find_dynamic_linkers() -> list[str]:
 
 @dataclass
 class LibcInfo:
-    """Stub."""
+    """Libc detection info."""
 
     family: str = "unknown"
     version: str | None = None
@@ -156,7 +156,7 @@ async def _detect_libc() -> LibcInfo:
 
 @dataclass
 class LddInfo:
-    """Stub."""
+    """Ldd detection info."""
 
     method: str = "unknown"
     cmd_template: list[str] | None = None
