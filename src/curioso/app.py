@@ -82,7 +82,7 @@ class LibcInfo:
     selected_linker: str = ""
     detector: str | None = None
 
-    def __json__(self):
+    def __json__(self) -> dict[str, Any]:
         """Convert to json."""
         return {
             "family": self.family,
@@ -162,7 +162,7 @@ class LddInfo:
     cmd_template: list[str] | None = None
     executable: str | None = None
 
-    def __json__(self):
+    def __json__(self) -> dict[str, Any]:
         """Convert to json."""
         return {
             "method": self.method,
@@ -206,7 +206,7 @@ class ReportInfo:
     libc: LibcInfo | None = None
     ldd_equivalent: LddInfo | None = None
 
-    def __json__(self):
+    def __json__(self) -> dict[str, Any]:
         """Convert to json."""
         return {
             "os": self.os,
@@ -240,7 +240,9 @@ async def probe() -> ReportInfo:
 
     osr = platform.freedesktop_os_release()
     report.distro = {k.lower(): v for k, v in osr.items()}
+
     report.package_manager = _choose_package_manager()
+
     report.libc = await _detect_libc()
     report.ldd_equivalent = _ldd_equivalent(
         report.libc.family,
