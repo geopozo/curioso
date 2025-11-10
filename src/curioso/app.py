@@ -239,13 +239,7 @@ async def probe() -> ReportInfo:
     report.flatpak = sb.get("flatpak", False)
 
     osr = platform.freedesktop_os_release()
-    report.distro = {
-        "id": osr.get("ID"),
-        "name": osr.get("NAME"),
-        "version_id": osr.get("VERSION_ID"),
-        "pretty_name": osr.get("PRETTY_NAME"),
-        "id_like": osr.get("ID_LIKE"),
-    }
+    report.distro = {k.lower(): v for k, v in osr.items()}
     report.package_manager = _choose_package_manager()
     report.libc = await _detect_libc()
     report.ldd_equivalent = _ldd_equivalent(
