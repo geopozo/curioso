@@ -38,9 +38,9 @@ def _detect_sandbox() -> dict[str, bool]:
     return {"snap": snap, "flatpak": flatpak}
 
 
-def _choose_package_manager() -> dict[str, Any]:
+def _choose_package_manager() -> dict[str, list[str]]:
     available_bins = _utils.which_any(PKG_BINARIES)
-    available_names = [Path(p).resolve() for p in available_bins]
+    available_names = [str(Path(p).resolve()) for p in available_bins]
 
     if available_bins:
         return {"packages": available_bins, "available": available_names}
@@ -249,6 +249,7 @@ async def probe() -> ReportInfo:
         "pretty_name": osr.get("PRETTY_NAME"),
         "id_like": osr.get("ID_LIKE"),
     }
+    report.package_manager = _choose_package_manager()
     report.libc = await _detect_libc()
     report.ldd_equivalent = _ldd_equivalent(
         report.libc.family,
