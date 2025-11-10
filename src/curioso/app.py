@@ -82,7 +82,7 @@ class LibcInfo:
     selected_linker: str = ""
     detector: str | None = None
 
-    def __json__(self) -> dict[str, Any]:
+    def __json__(self) -> dict[str, str | None]:
         """Convert to json."""
         return {
             "family": self.family,
@@ -162,7 +162,7 @@ class LddInfo:
     cmd_template: list[str] | None = None
     executable: str | None = None
 
-    def __json__(self) -> dict[str, Any]:
+    def __json__(self) -> dict[str, str | list[str] | None]:
         """Convert to json."""
         return {
             "method": self.method,
