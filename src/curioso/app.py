@@ -1,7 +1,6 @@
 """."""
 
 import glob
-import json
 import os
 import platform
 import re
@@ -10,8 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from curioso import _utils
-
-# ruff: noqa: T201 allow print in CLI
 
 PKG_BINARIES = [
     "apt",
@@ -211,9 +208,9 @@ class ReportInfo:
     libc: LibcInfo | None = None
     ldd_equivalent: LddInfo | None = None
 
-    def to_json(self, *, pretty: bool = False) -> None:
-        """Print report output."""
-        data = {
+    def __json__(self):
+        """Convert to json."""
+        return {
             "os": self.os,
             "kernel": self.kernel,
             "supported": self.supported,
@@ -224,7 +221,6 @@ class ReportInfo:
             "libc": self.libc,
             "ldd_equivalent": self.ldd_equivalent,
         }
-        print(json.dumps(data, indent=2 if pretty else None, sort_keys=False))
 
 
 # orchestrator
