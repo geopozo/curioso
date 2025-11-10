@@ -113,7 +113,7 @@ async def _detect_libc() -> LibcInfo:
         return m.group(1) if m else ""
 
     if sel:
-        out, err, _ = await _utils.run_cmd([sel, "---version"])
+        out, err, _ = await _utils.run_cmd([sel, "--version"])
         combined = (out.decode() + "\n" + err.decode()).strip()
 
         if "musl" in combined.lower():
