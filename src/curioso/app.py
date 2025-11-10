@@ -199,8 +199,7 @@ class ReportInfo:
     kernel: str = ""
     supported: bool = False
     machines: str = ""
-    snap: bool = False
-    flatpak: bool = False
+    sandbox: dict[str, bool] | None = None
     distro: dict[str, Any] | None = None
     package_manager: dict[str, Any] | None = None
     libc: LibcInfo | None = None
@@ -211,9 +210,9 @@ class ReportInfo:
         return {
             "os": self.os,
             "kernel": self.kernel,
+            "machines": self.machines,
             "supported": self.supported,
-            "snap": self.snap,
-            "flatpak": self.flatpak,
+            "sandbox": self.sandbox,
             "distro": self.distro,
             "package_manager": self.package_manager,
             "libc": self.libc,
@@ -234,10 +233,7 @@ async def probe() -> ReportInfo:
     if not report.supported:
         return report
 
-    sb = _detect_sandbox()
-    report.snap = sb.get("snap", False)
-    report.flatpak = sb.get("flatpak", False)
-
+    report.sandbox = _detect_sandbox()
     osr = platform.freedesktop_os_release()
     report.distro = {k.lower(): v for k, v in osr.items()}
 
