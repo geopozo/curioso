@@ -1,11 +1,21 @@
 import asyncio
+import json
 
-from curioso import app
+from curioso import _utils, app
+
+# ruff: noqa: T201 allow print in CLI
 
 
 async def main():
     data = await app.probe()
-    data.to_json(pretty=True)
+    print(
+        json.dumps(
+            data,
+            indent=2,
+            sort_keys=False,
+            cls=_utils.AutoEncoder,
+        ),
+    )
 
 
 def run_cli():
