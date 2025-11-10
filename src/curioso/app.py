@@ -31,25 +31,6 @@ PKG_BINARIES = [
 ]
 
 
-@dataclass
-class OsInfo:
-    """Return OS Platform Info."""
-
-    os: str = ""
-    kernel: str = ""
-    platform: str = ""
-    machines: str = ""
-
-
-def _detect_os() -> OsInfo:
-    return OsInfo(
-        os=platform.system(),
-        kernel=platform.release(),
-        platform=platform.platform(),
-        machines=platform.machine(),
-    )
-
-
 def _detect_sandbox() -> dict[str, bool]:
     snap = bool(os.environ.get("SNAP") or os.environ.get("SNAP_NAME"))
     flatpak = bool(
@@ -217,6 +198,7 @@ class ReportInfo:
     os: str = ""
     kernel: str = ""
     supported: bool = False
+    machines: str = ""
     snap: bool = False
     flatpak: bool = False
     distro: dict[str, Any] | None = None
@@ -243,11 +225,12 @@ class ReportInfo:
 # orchestrator
 async def probe() -> ReportInfo:
     """Stub."""
-    os_info = _detect_os()
+    os_name = platform.system()
     report = ReportInfo(
-        os=os_info.os,
-        kernel=os_info.kernel,
-        supported=os_info.os.lower() == "linux",
+        os=os_name,
+        kernel=platform.release(),
+        supported=os_name.lower() == "linux",
+        machines=platform.machine(),
     )
 
     if not report.supported:
