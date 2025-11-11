@@ -19,7 +19,9 @@ authors = [
     { name = "David Angarita", email = "davidangarita.sistemas@gmail.com" },
 ]
 maintainers = [{ name = "Andrew Pikul", email = "ajpikul@gmail.com" }]
-dependencies = []
+dependencies = [
+    "packaging>=25.0",
+]
 
 [project.scripts]
 curioso = "curioso._cli:run_cli"
