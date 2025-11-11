@@ -26,6 +26,8 @@ PKG_BINARIES = [
     "eopkg",
     "urpmi",
 ]
+GLIBC_RE = r"(?:glibc|gnu c library)[^\d]*(\d+\.\d+(?:\.\d+)?)"
+MUSL_RE = r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
 
 
 def _detect_sandbox() -> dict[str, bool]:
@@ -102,9 +104,6 @@ def _parse_libc_ver(text: str, pattern: str) -> str:
 
 
 async def _detect_libc() -> LibcInfo:
-    glibc_reg = r"(?:glibc|gnu c library)[^\d]*(\d+\.\d+(?:\.\d+)?)"
-    musl_reg = r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
-
     linkers = _find_dynamic_linkers()
     sel_linker = linkers[0] if linkers else None
 
@@ -122,7 +121,7 @@ async def _detect_libc() -> LibcInfo:
     if "musl" in combined.lower():
         return LibcInfo(
             family="musl",
-            version=_parse_libc_ver(combined, musl_reg),
+            version=_parse_libc_ver(combined, MUSL_RE),
             selected_linker=sel_linker,
             detector="ld--version",
         )
@@ -134,7 +133,7 @@ async def _detect_libc() -> LibcInfo:
     ):
         return LibcInfo(
             family="glibc",
-            version=_parse_libc_ver(combined, glibc_reg),
+            version=_parse_libc_ver(combined, GLIBC_RE),
             selected_linker=sel_linker,
             detector="ld--version",
         )
@@ -144,7 +143,7 @@ async def _detect_libc() -> LibcInfo:
     if "musl" in combined.lower():
         return LibcInfo(
             family="musl",
-            version=_parse_libc_ver(combined, musl_reg),
+            version=_parse_libc_ver(combined, MUSL_RE),
             selected_linker=sel_linker,
             detector="ldd-mode",
         )
@@ -219,7 +218,6 @@ async def probe() -> ReportInfo:
     """Stub."""
     os_name = platform.system()
     supported = os_name.lower() == "linux"
-
     report = ReportInfo(
         os=os_name,
         kernel=platform.release(),
@@ -232,7 +230,6 @@ async def probe() -> ReportInfo:
 
     osr = platform.freedesktop_os_release()
     report.distro = {k.lower(): v for k, v in osr.items()}
-
     report.sandbox = _detect_sandbox()
     report.package_manager = _choose_package_manager()
     report.libc = await _detect_libc()
