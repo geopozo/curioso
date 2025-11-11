@@ -3,7 +3,6 @@
 import glob
 import os
 import platform
-import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -26,8 +25,6 @@ PKG_BINARIES = [
     "eopkg",
     "urpmi",
 ]
-GLIBC_RE = r"(?:glibc|gnu c library)[^\d]*(\d+\.\d+(?:\.\d+)?)"
-MUSL_RE = r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
 
 
 def _detect_sandbox() -> dict[str, bool]:
@@ -94,61 +91,32 @@ class LibcInfo:
         }
 
 
-def _parse_libc_ver(text: str, pattern: str) -> str:
-    m = re.search(
-        pattern,
-        text,
-        re.IGNORECASE,
-    )
-    return m.group(1) if m else ""
-
-
 async def _detect_libc() -> LibcInfo:
     linkers = _find_dynamic_linkers()
     sel_linker = linkers[0] if linkers else None
+    fam, ver = platform.libc_ver()
 
-    if not sel_linker:
-        fam, ver = platform.libc_ver()
+    if fam == "glibc" or not sel_linker:
         return LibcInfo(
             family=fam,
             version=ver,
             selected_linker=sel_linker,
             detector="platform.libc_ver",
         )
-
-    out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
-    combined = (out.decode() + "\n" + err.decode()).strip()
-    if "musl" in combined.lower():
+    else:
+        out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
+        combined = (out.decode() + "\n" + err.decode()).strip().lower()
+        version = next(
+            line.strip().split()[1]
+            for line in combined.splitlines()
+            if line.startswith("version")
+        )
         return LibcInfo(
             family="musl",
-            version=_parse_libc_ver(combined, MUSL_RE),
+            version=version,
             selected_linker=sel_linker,
             detector="ld--version",
         )
-
-    if (
-        "glibc" in combined.lower()
-        or "gnu c library" in combined.lower()
-        or "ld-linux" in Path(sel_linker).name
-    ):
-        return LibcInfo(
-            family="glibc",
-            version=_parse_libc_ver(combined, GLIBC_RE),
-            selected_linker=sel_linker,
-            detector="ld--version",
-        )
-
-    out, err, _ = await _utils.run_cmd(["ldd", "--version"], executable=sel_linker)
-    combined = (out.decode() + "\n" + err.decode()).strip()
-    if "musl" in combined.lower():
-        return LibcInfo(
-            family="musl",
-            version=_parse_libc_ver(combined, MUSL_RE),
-            selected_linker=sel_linker,
-            detector="ldd-mode",
-        )
-
-    return LibcInfo()
 
 
 @dataclass
