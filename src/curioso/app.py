@@ -155,7 +155,7 @@ def _ldd_equivalent(libc_family: str, linker: str | None) -> LddInfo:
 
 @dataclass()
 class ReportInfo:
-    """Stub."""
+    """System report metadata and compatibility info."""
 
     os: str | None = None
     kernel: str | None = None
@@ -183,7 +183,7 @@ class ReportInfo:
 
 
 async def probe() -> ReportInfo:
-    """Stub."""
+    """Detect system configuration and runtime environment."""
     os_name = platform.system()
     supported = os_name.lower() == "linux"
     report = ReportInfo(
