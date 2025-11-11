@@ -170,16 +170,13 @@ class LddInfo:
 
 
 def _ldd_equivalent(libc_family: str, linker: str | None) -> LddInfo:
-    if not linker:
-        return LddInfo()
-
-    if libc_family == "glibc":
+    if libc_family == "glibc" and linker:
         return LddInfo(
             method="glibc-ld--list",
             cmd_template=[linker, "--list", "{target}"],
         )
 
-    if libc_family == "musl":
+    if libc_family == "musl" and linker:
         return LddInfo(
             method="musl-ld-argv0-ldd",
             cmd_template=["ldd", "{target}"],
