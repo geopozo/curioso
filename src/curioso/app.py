@@ -106,48 +106,50 @@ async def _detect_libc() -> LibcInfo:
     musl_reg = r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
 
     linkers = _find_dynamic_linkers()
-    sel = linkers[0] if linkers else None
+    sel_linker = linkers[0] if linkers else None
 
-    if sel:
-        out, err, _ = await _utils.run_cmd([sel, "--version"])
-        combined = (out.decode() + "\n" + err.decode()).strip()
+    if not sel_linker:
+        fam, ver = platform.libc_ver()
+        return LibcInfo(
+            family=fam,
+            version=ver,
+            selected_linker=sel_linker,
+            detector="platform.libc_ver",
+        )
 
-        if "musl" in combined.lower():
-            return LibcInfo(
-                family="musl",
-                version=_parse_libc_ver(combined, musl_reg),
-                selected_linker=sel,
-                detector="ld--version",
-            )
-        if (
-            "glibc" in combined.lower()
-            or "gnu c library" in combined.lower()
-            or "ld-linux" in Path(sel).name
-        ):
-            return LibcInfo(
-                family="glibc",
-                version=_parse_libc_ver(combined, glibc_reg),
-                selected_linker=sel,
-                detector="ld--version",
-            )
+    out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
+    combined = (out.decode() + "\n" + err.decode()).strip()
+    if "musl" in combined.lower():
+        return LibcInfo(
+            family="musl",
+            version=_parse_libc_ver(combined, musl_reg),
+            selected_linker=sel_linker,
+            detector="ld--version",
+        )
 
-        out, err, _ = await _utils.run_cmd(["ldd", "--version"], executable=sel)
-        combined = (out.decode() + "\n" + err.decode()).strip()
-        if "musl" in combined.lower():
-            return LibcInfo(
-                family="musl",
-                version=_parse_libc_ver(combined, musl_reg),
-                selected_linker=sel,
-                detector="ldd-mode",
-            )
+    if (
+        "glibc" in combined.lower()
+        or "gnu c library" in combined.lower()
+        or "ld-linux" in Path(sel_linker).name
+    ):
+        return LibcInfo(
+            family="glibc",
+            version=_parse_libc_ver(combined, glibc_reg),
+            selected_linker=sel_linker,
+            detector="ld--version",
+        )
 
-    fam, ver = platform.libc_ver()
-    return LibcInfo(
-        family=fam,
-        version=ver,
-        selected_linker=sel or "",
-        detector="platform.libc_ver",
-    )
+    out, err, _ = await _utils.run_cmd(["ldd", "--version"], executable=sel_linker)
+    combined = (out.decode() + "\n" + err.decode()).strip()
+    if "musl" in combined.lower():
+        return LibcInfo(
+            family="musl",
+            version=_parse_libc_ver(combined, musl_reg),
+            selected_linker=sel_linker,
+            detector="ldd-mode",
+        )
+
+    return LibcInfo()
 
 
 @dataclass
