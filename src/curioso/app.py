@@ -92,25 +92,21 @@ class LibcInfo:
         }
 
 
+def _parse_libc_ver(text: str, pattern: str) -> str:
+    m = re.search(
+        pattern,
+        text,
+        re.IGNORECASE,
+    )
+    return m.group(1) if m else ""
+
+
 async def _detect_libc() -> LibcInfo:
+    glibc_reg = r"(?:glibc|gnu c library)[^\d]*(\d+\.\d+(?:\.\d+)?)"
+    musl_reg = r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)"
+
     linkers = _find_dynamic_linkers()
     sel = linkers[0] if linkers else None
-
-    def parse_glib_ver(text: str) -> str:
-        m = re.search(
-            r"(?:glibc|gnu c library)[^\d]*(\d+\.\d+(?:\.\d+)?)",
-            text,
-            re.IGNORECASE,
-        )
-        return m.group(1) if m else ""
-
-    def parse_musl_ver(text: str) -> str:
-        m = re.search(
-            r"musl[^0-9]*([0-9]+\.[0-9]+(?:\.[0-9]+)?)",
-            text,
-            re.IGNORECASE,
-        )
-        return m.group(1) if m else ""
 
     if sel:
         out, err, _ = await _utils.run_cmd([sel, "--version"])
@@ -119,7 +115,7 @@ async def _detect_libc() -> LibcInfo:
         if "musl" in combined.lower():
             return LibcInfo(
                 family="musl",
-                version=parse_musl_ver(combined),
+                version=_parse_libc_ver(combined, musl_reg),
                 selected_linker=sel,
                 detector="ld--version",
             )
@@ -130,7 +126,7 @@ async def _detect_libc() -> LibcInfo:
         ):
             return LibcInfo(
                 family="glibc",
-                version=parse_glib_ver(combined),
+                version=_parse_libc_ver(combined, glibc_reg),
                 selected_linker=sel,
                 detector="ld--version",
             )
@@ -140,7 +136,7 @@ async def _detect_libc() -> LibcInfo:
         if "musl" in combined.lower():
             return LibcInfo(
                 family="musl",
-                version=parse_musl_ver(combined),
+                version=_parse_libc_ver(combined, musl_reg),
                 selected_linker=sel,
                 detector="ldd-mode",
             )
