@@ -79,7 +79,7 @@ class LibcInfo:
 
     family: str = "unknown"
     version: str | None = None
-    selected_linker: str = ""
+    selected_linker: str | None = None
     detector: str | None = None
 
     def __json__(self) -> dict[str, str | None]:
@@ -158,7 +158,7 @@ async def _detect_libc() -> LibcInfo:
 class LddInfo:
     """Ldd detection info."""
 
-    method: str = "unknown"
+    method: str | None = None
     cmd_template: list[str] | None = None
     executable: str | None = None
 
@@ -171,7 +171,7 @@ class LddInfo:
         }
 
 
-def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
+def _ldd_equivalent(libc_family: str, linker: str | None) -> LddInfo:
     if not linker:
         return LddInfo()
 
@@ -191,14 +191,14 @@ def _ldd_equivalent(libc_family: str, linker: str) -> LddInfo:
     return LddInfo()
 
 
-@dataclass
+@dataclass()
 class ReportInfo:
     """Stub."""
 
-    os: str = ""
-    kernel: str = ""
+    os: str | None = None
+    kernel: str | None = None
     supported: bool = False
-    machines: str = ""
+    machines: str | None = None
     sandbox: dict[str, bool] | None = None
     distro: dict[str, Any] | None = None
     package_manager: dict[str, Any] | None = None
@@ -223,22 +223,23 @@ class ReportInfo:
 async def probe() -> ReportInfo:
     """Stub."""
     os_name = platform.system()
+    supported = os_name.lower() == "linux"
+
     report = ReportInfo(
         os=os_name,
         kernel=platform.release(),
-        supported=os_name.lower() == "linux",
+        supported=supported,
         machines=platform.machine(),
     )
 
-    if not report.supported:
+    if not supported:
         return report
 
-    report.sandbox = _detect_sandbox()
     osr = platform.freedesktop_os_release()
     report.distro = {k.lower(): v for k, v in osr.items()}
 
+    report.sandbox = _detect_sandbox()
     report.package_manager = _choose_package_manager()
-
     report.libc = await _detect_libc()
     report.ldd_equivalent = _ldd_equivalent(
         report.libc.family,
