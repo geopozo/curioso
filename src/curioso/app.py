@@ -186,29 +186,29 @@ class ReportInfo:
 
         raise FileNotFoundError("No package manager found")
 
+    @classmethod
+    async def probe(cls) -> "ReportInfo":
+        """Detect system configuration and runtime environment."""
+        os_name = platform.system()
+        supported = os_name.lower() == "linux"
+        report = cls(
+            os=os_name,
+            kernel=platform.release(),
+            supported=supported,
+            machines=platform.machine(),
+        )
 
-async def probe() -> ReportInfo:
-    """Detect system configuration and runtime environment."""
-    os_name = platform.system()
-    supported = os_name.lower() == "linux"
-    report = ReportInfo(
-        os=os_name,
-        kernel=platform.release(),
-        supported=supported,
-        machines=platform.machine(),
-    )
+        if not supported:
+            return report
 
-    if not supported:
+        osr = platform.freedesktop_os_release()
+        report.distro = {k.lower(): v for k, v in osr.items()}
+        report.sandbox = cls.detect_sandbox()
+        report.package_manager = cls.choose_package_manager()
+        report.libc = await LibcInfo.detect_libc()
+        report.ldd_equivalent = DepInfo.ldd_equivalent(
+            report.libc.family,
+            report.libc.selected_linker,
+        )
+
         return report
-
-    osr = platform.freedesktop_os_release()
-    report.distro = {k.lower(): v for k, v in osr.items()}
-    report.sandbox = ReportInfo.detect_sandbox()
-    report.package_manager = ReportInfo.choose_package_manager()
-    report.libc = await LibcInfo.detect_libc()
-    report.ldd_equivalent = DepInfo.ldd_equivalent(
-        report.libc.family,
-        report.libc.selected_linker,
-    )
-
-    return report

@@ -1,5 +1,5 @@
 """Stub."""
 
-from curioso.app import probe
+from curioso.app import ReportInfo
 
-__all__ = ["probe"]
+__all__ = ["ReportInfo"]
