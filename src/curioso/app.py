@@ -90,33 +90,34 @@ class LibcInfo:
             "detector": self.detector,
         }
 
+    @classmethod
+    async def detect_libc(cls) -> "LibcInfo":
+        """Stub."""
+        linkers = _find_dynamic_linkers()
+        sel_linker = linkers[0] if linkers else None
+        fam, ver = platform.libc_ver()
 
-async def _detect_libc() -> LibcInfo:
-    linkers = _find_dynamic_linkers()
-    sel_linker = linkers[0] if linkers else None
-    fam, ver = platform.libc_ver()
-
-    if fam == "glibc" or not sel_linker:
-        return LibcInfo(
-            family=fam,
-            version=ver,
-            selected_linker=sel_linker,
-            detector="platform.libc_ver",
-        )
-    else:
-        out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
-        combined = (out.decode() + "\n" + err.decode()).strip().lower()
-        version = next(
-            line.strip().split()[1]
-            for line in combined.splitlines()
-            if line.startswith("version")
-        )
-        return LibcInfo(
-            family="musl",
-            version=version,
-            selected_linker=sel_linker,
-            detector="ld--version",
-        )
+        if fam == "glibc" or not sel_linker:
+            return cls(
+                family=fam,
+                version=ver,
+                selected_linker=sel_linker,
+                detector="platform.libc_ver",
+            )
+        else:
+            out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
+            combined = (out.decode() + "\n" + err.decode()).strip().lower()
+            version = next(
+                line.strip().split()[1]
+                for line in combined.splitlines()
+                if line.startswith("version")
+            )
+            return cls(
+                family="musl",
+                version=version,
+                selected_linker=sel_linker,
+                detector="ld--version",
+            )
 
 
 @dataclass
@@ -201,7 +202,7 @@ async def probe() -> ReportInfo:
     report.distro = {k.lower(): v for k, v in osr.items()}
     report.sandbox = _detect_sandbox()
     report.package_manager = _choose_package_manager()
-    report.libc = await _detect_libc()
+    report.libc = await LibcInfo.detect_libc()
     report.ldd_equivalent = DepInfo.ldd_equivalent(
         report.libc.family,
         report.libc.selected_linker,
