@@ -26,6 +26,15 @@ PKG_BINARIES = [
     "urpmi",
 ]
 
+PATTERNS = [
+    "/lib*/ld-linux*.so*",
+    "/lib/*/ld-linux*.so*",
+    "/lib*/ld-*.so*",
+    "/lib/*/ld-*.so*",
+    "/lib*/ld-musl-*.so*",
+    "/lib/*/ld-musl-*.so*",
+]
+
 
 def _detect_sandbox() -> dict[str, bool]:
     snap = bool(os.environ.get("SNAP") or os.environ.get("SNAP_NAME"))
@@ -48,18 +57,9 @@ def _choose_package_manager() -> dict[str, list[str]]:
 
 
 def _find_dynamic_linkers() -> list[str]:
-    patterns = [
-        "/lib*/ld-linux*.so*",
-        "/lib/*/ld-linux*.so*",
-        "/lib*/ld-*.so*",
-        "/lib/*/ld-*.so*",
-        "/lib*/ld-musl-*.so*",
-        "/lib/*/ld-musl-*.so*",
-    ]
-
     found = {
         p
-        for pat in patterns
+        for pat in PATTERNS
         for p in glob.glob(pat)  # noqa: PTH207
         if Path(p).is_file() and os.access(p, os.X_OK)
     }
