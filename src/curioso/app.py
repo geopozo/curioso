@@ -36,26 +36,6 @@ PATTERNS = [
 ]
 
 
-def _detect_sandbox() -> dict[str, bool]:
-    snap = bool(os.environ.get("SNAP") or os.environ.get("SNAP_NAME"))
-    flatpak = bool(
-        os.environ.get("FLATPAK_ID")
-        or os.environ.get("FLATPAK_SESSION_HELPER")
-        or Path("/.flatpak-info").exists(),
-    )
-    return {"snap": snap, "flatpak": flatpak}
-
-
-def _choose_package_manager() -> dict[str, list[str]]:
-    available_bins = _utils.which_any(PKG_BINARIES)
-    available_names = [str(Path(p).resolve()) for p in available_bins]
-
-    if available_bins:
-        return {"packages": available_bins, "available": available_names}
-
-    raise FileNotFoundError("No package manager found")
-
-
 def _find_dynamic_linkers() -> list[str]:
     found = {
         p
@@ -183,6 +163,28 @@ class ReportInfo:
             "ldd_equivalent": self.ldd_equivalent,
         }
 
+    @staticmethod
+    def detect_sandbox() -> dict[str, bool]:
+        """Detect sandbox environment."""
+        snap = bool(os.environ.get("SNAP") or os.environ.get("SNAP_NAME"))
+        flatpak = bool(
+            os.environ.get("FLATPAK_ID")
+            or os.environ.get("FLATPAK_SESSION_HELPER")
+            or Path("/.flatpak-info").exists(),
+        )
+        return {"snap": snap, "flatpak": flatpak}
+
+    @staticmethod
+    def choose_package_manager() -> dict[str, list[str]]:
+        """Choose available package manager."""
+        available_bins = _utils.which_any(PKG_BINARIES)
+        available_names = [str(Path(p).resolve()) for p in available_bins]
+
+        if available_bins:
+            return {"packages": available_bins, "available": available_names}
+
+        raise FileNotFoundError("No package manager found")
+
 
 async def probe() -> ReportInfo:
     """Detect system configuration and runtime environment."""
@@ -200,8 +202,8 @@ async def probe() -> ReportInfo:
 
     osr = platform.freedesktop_os_release()
     report.distro = {k.lower(): v for k, v in osr.items()}
-    report.sandbox = _detect_sandbox()
-    report.package_manager = _choose_package_manager()
+    report.sandbox = ReportInfo.detect_sandbox()
+    report.package_manager = ReportInfo.choose_package_manager()
     report.libc = await LibcInfo.detect_libc()
     report.ldd_equivalent = DepInfo.ldd_equivalent(
         report.libc.family,
