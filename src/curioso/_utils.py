@@ -26,4 +26,4 @@ async def run_cmd(
 
 
 def which_any(names: list[str]) -> list[str]:
-    return [n for n in names if shutil.which(n)]
+    return [n2 for n in names if (n2 := shutil.which(n))]
