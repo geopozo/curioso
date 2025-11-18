@@ -135,22 +135,23 @@ class LddInfo:
             "executable": self.executable,
         }
 
+    @classmethod
+    def equivalent(cls, libc_family: str, linker: str | None) -> "LddInfo":
+        """Stub."""
+        if libc_family == "glibc" and linker:
+            return cls(
+                method="glibc-ld--list",
+                cmd_template=[linker, "--list", "{target}"],
+            )
 
-def _ldd_equivalent(libc_family: str, linker: str | None) -> LddInfo:
-    if libc_family == "glibc" and linker:
-        return LddInfo(
-            method="glibc-ld--list",
-            cmd_template=[linker, "--list", "{target}"],
-        )
+        if libc_family == "musl" and linker:
+            return cls(
+                method="musl-ld-argv0-ldd",
+                cmd_template=["ldd", "{target}"],
+                executable=linker,
+            )
 
-    if libc_family == "musl" and linker:
-        return LddInfo(
-            method="musl-ld-argv0-ldd",
-            cmd_template=["ldd", "{target}"],
-            executable=linker,
-        )
-
-    return LddInfo()
+        return cls()
 
 
 @dataclass()
@@ -201,7 +202,7 @@ async def probe() -> ReportInfo:
     report.sandbox = _detect_sandbox()
     report.package_manager = _choose_package_manager()
     report.libc = await _detect_libc()
-    report.ldd_equivalent = _ldd_equivalent(
+    report.ldd_equivalent = LddInfo.equivalent(
         report.libc.family,
         report.libc.selected_linker,
     )
