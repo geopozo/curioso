@@ -36,22 +36,6 @@ PATTERNS = [
 ]
 
 
-def _find_dynamic_linkers() -> list[str]:
-    found = {
-        p
-        for pat in PATTERNS
-        for p in glob.glob(pat)  # noqa: PTH207
-        if Path(p).is_file() and os.access(p, os.X_OK)
-    }
-
-    mach = platform.machine()
-    (sorted_list := list(found)).sort(
-        key=lambda x: (0 if mach and mach in x else 1, len(x)),
-    )
-
-    return sorted_list
-
-
 @dataclass
 class LibcInfo:
     """Libc detection info."""
@@ -70,10 +54,27 @@ class LibcInfo:
             "detector": self.detector,
         }
 
+    @staticmethod
+    def find_dynamic_linkers() -> list[str]:
+        """Find dynamic linkers in standard locations."""
+        found = {
+            p
+            for pat in PATTERNS
+            for p in glob.glob(pat)  # noqa: PTH207
+            if Path(p).is_file() and os.access(p, os.X_OK)
+        }
+
+        mach = platform.machine()
+        (sorted_list := list(found)).sort(
+            key=lambda x: (0 if mach and mach in x else 1, len(x)),
+        )
+
+        return sorted_list
+
     @classmethod
     async def detect_libc(cls) -> "LibcInfo":
-        """Stub."""
-        linkers = _find_dynamic_linkers()
+        """Detect libc family and version."""
+        linkers = cls.find_dynamic_linkers()
         sel_linker = linkers[0] if linkers else None
         fam, ver = platform.libc_ver()
 
@@ -118,7 +119,7 @@ class DepInfo:
 
     @classmethod
     def ldd_equivalent(cls, libc_family: str, linker: str | None) -> "DepInfo":
-        """Stub."""
+        """Detect ldd equivalent command."""
         if libc_family == "glibc" and linker:
             return cls(
                 method="glibc-ld--list",
