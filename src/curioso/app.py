@@ -161,7 +161,7 @@ class ReportInfo:
             "distro": self.distro,
             "package_manager": self.package_manager,
             "libc": self.libc,
-            "ldd_equivalent": self.ldd_equivalent,
+            "ldd": self.ldd_equivalent,
         }
 
     @staticmethod
@@ -202,7 +202,13 @@ class ReportInfo:
             return report
 
         osr = platform.freedesktop_os_release()
-        report.distro = {k.lower(): v for k, v in osr.items()}
+        report.distro = {
+            "id": osr.get("ID"),
+            "name": osr.get("NAME"),
+            "version_id": osr.get("VERSION_ID"),
+            "pretty_name": osr.get("PRETTY_NAME"),
+            "id_like": osr.get("ID_LIKE"),
+        }
         report.sandbox = cls.detect_sandbox()
         report.package_manager = cls.choose_package_manager()
         report.libc = await LibcInfo.detect_libc()
