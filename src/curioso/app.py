@@ -120,7 +120,7 @@ async def _detect_libc() -> LibcInfo:
 
 
 @dataclass
-class LddInfo:
+class DepInfo:
     """Ldd detection info."""
 
     method: str | None = None
@@ -136,7 +136,7 @@ class LddInfo:
         }
 
     @classmethod
-    def equivalent(cls, libc_family: str, linker: str | None) -> "LddInfo":
+    def ldd_equivalent(cls, libc_family: str, linker: str | None) -> "DepInfo":
         """Stub."""
         if libc_family == "glibc" and linker:
             return cls(
@@ -166,7 +166,7 @@ class ReportInfo:
     distro: dict[str, Any] | None = None
     package_manager: dict[str, Any] | None = None
     libc: LibcInfo | None = None
-    ldd_equivalent: LddInfo | None = None
+    ldd_equivalent: DepInfo | None = None
 
     def __json__(self) -> dict[str, Any]:
         """Convert to json."""
@@ -202,7 +202,7 @@ async def probe() -> ReportInfo:
     report.sandbox = _detect_sandbox()
     report.package_manager = _choose_package_manager()
     report.libc = await _detect_libc()
-    report.ldd_equivalent = LddInfo.equivalent(
+    report.ldd_equivalent = DepInfo.ldd_equivalent(
         report.libc.family,
         report.libc.selected_linker,
     )
