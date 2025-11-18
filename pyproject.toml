@@ -19,15 +19,13 @@ authors = [
     { name = "David Angarita", email = "davidangarita.sistemas@gmail.com" },
 ]
 maintainers = [{ name = "Andrew Pikul", email = "ajpikul@gmail.com" }]
-dependencies = [
-    "packaging>=25.0",
-]
+dependencies = ["packaging>=25.0"]
 
 [project.scripts]
 curioso = "curioso._cli:run_cli"
 
 [dependency-groups]
-dev = ["pyright>=1.1.407"]
+dev = ["ipdb>=0.13.13", "pyright>=1.1.407"]
 
 [tool.ruff.lint]
 select = ["ALL"]
