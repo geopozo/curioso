@@ -97,7 +97,7 @@ class LibcInfo:
                 family="musl",
                 version=version,
                 selected_linker=sel_linker,
-                detector="ld--version",
+                detector="ld --version",
             )
 
 
