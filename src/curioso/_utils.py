@@ -1,28 +1,33 @@
+import asyncio
+import json
 import shutil
 import subprocess
 
 
-def run_cmd(
-    argv: list[str],
-    timeout: int = 6,
+class AutoEncoder(json.JSONEncoder):
+    def default(self, o):
+        if hasattr(o, "__json__"):
+            return o.__json__()
+        return super().default(o)
+
+
+async def run_cmd(
+    commands: list[str],
     executable: str | None = None,
-) -> tuple[int, str, str]:
-    try:
-        p = subprocess.run(  # noqa: S603, UP022
-            argv,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
-            timeout=timeout,
-            executable=executable,
-        )
-        return p.returncode, p.stdout.strip(), p.stderr.strip()
-    except FileNotFoundError:
-        return 127, "", f"{executable or argv[0]}: not found"
-    except subprocess.TimeoutExpired:
-        return 124, "", "timeout"
+) -> tuple[bytes, bytes, int]:
+    proc = await asyncio.create_subprocess_exec(
+        *commands,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        executable=executable,
+    )
+    stdout, stderr = await proc.communicate()
+
+    if proc.returncode is None:
+        raise RuntimeError("Impossible to reach this code.")
+
+    return stdout, stderr, proc.returncode
 
 
 def which_any(names: list[str]) -> list[str]:
-    return [n for n in names if shutil.which(n)]
+    return [n2 for n in names if (n2 := shutil.which(n))]

@@ -1,0 +1,455 @@
+[
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "debian",
+			"name": "Debian GNU/Linux",
+			"version_id": "13",
+			"pretty_name": "Debian GNU/Linux 13 (trixie)",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.41",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "debian",
+			"name": "Debian GNU/Linux",
+			"version_id": "13",
+			"pretty_name": "Debian GNU/Linux 13 (trixie)",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.41",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "debian",
+			"name": "Debian GNU/Linux",
+			"version_id": "13",
+			"pretty_name": "Debian GNU/Linux 13 (trixie)",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.41",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "debian",
+			"name": "Debian GNU/Linux",
+			"version_id": "12",
+			"pretty_name": "Debian GNU/Linux 12 (bookworm)",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.36",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "debian",
+			"name": "Debian GNU/Linux",
+			"version_id": "11",
+			"pretty_name": "Debian GNU/Linux 11 (bullseye)",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.31",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-2.31.so",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-2.31.so",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "ubuntu",
+			"name": "Ubuntu",
+			"version_id": "24.04",
+			"pretty_name": "Ubuntu 24.04.3 LTS",
+			"id_like": "debian"
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.39",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "ubuntu",
+			"name": "Ubuntu",
+			"version_id": "20.04",
+			"pretty_name": "Ubuntu 20.04.6 LTS",
+			"id_like": "debian"
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.31",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-2.31.so",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-2.31.so",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "ubuntu",
+			"name": "Ubuntu",
+			"version_id": "22.04",
+			"pretty_name": "Ubuntu 22.04.5 LTS",
+			"id_like": "debian"
+		},
+		"package_manager": {
+			"packages": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			],
+			"available": [
+				"/usr/bin/apt",
+				"/usr/bin/apt-get"
+			]
+		},
+		"libc": {
+			"family": "glibc",
+			"version": "2.35",
+			"selected_linker": "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+			"detector": "platform.libc_ver"
+		},
+		"ldd": {
+			"method": "glibc-ld--list",
+			"cmd_template": [
+				"/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+				"--list",
+				"{target}"
+			],
+			"executable": null
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "alpine",
+			"name": "Alpine Linux",
+			"version_id": "3.22.2",
+			"pretty_name": "Alpine Linux v3.22",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/sbin/apk"
+			],
+			"available": [
+				"/sbin/apk"
+			]
+		},
+		"libc": {
+			"family": "musl",
+			"version": "1.2.5",
+			"selected_linker": "/lib/ld-musl-x86_64.so.1",
+			"detector": "ld --version"
+		},
+		"ldd": {
+			"method": "musl-ld-argv0-ldd",
+			"cmd_template": [
+				"ldd",
+				"{target}"
+			],
+			"executable": "/lib/ld-musl-x86_64.so.1"
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "alpine",
+			"name": "Alpine Linux",
+			"version_id": "3.19.9",
+			"pretty_name": "Alpine Linux v3.19",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/sbin/apk"
+			],
+			"available": [
+				"/sbin/apk"
+			]
+		},
+		"libc": {
+			"family": "musl",
+			"version": "1.2.4_git20230717",
+			"selected_linker": "/lib/ld-musl-x86_64.so.1",
+			"detector": "ld --version"
+		},
+		"ldd": {
+			"method": "musl-ld-argv0-ldd",
+			"cmd_template": [
+				"ldd",
+				"{target}"
+			],
+			"executable": "/lib/ld-musl-x86_64.so.1"
+		}
+	},
+	{
+		"os": "Linux",
+		"kernel": "6.6.87.2-microsoft-standard-WSL2",
+		"machines": "x86_64",
+		"supported": true,
+		"sandbox": {
+			"snap": false,
+			"flatpak": false
+		},
+		"distro": {
+			"id": "alpine",
+			"name": "Alpine Linux",
+			"version_id": "3.17.10",
+			"pretty_name": "Alpine Linux v3.17",
+			"id_like": null
+		},
+		"package_manager": {
+			"packages": [
+				"/sbin/apk"
+			],
+			"available": [
+				"/sbin/apk"
+			]
+		},
+		"libc": {
+			"family": "musl",
+			"version": "1.2.3",
+			"selected_linker": "/lib/ld-musl-x86_64.so.1",
+			"detector": "ld --version"
+		},
+		"ldd": {
+			"method": "musl-ld-argv0-ldd",
+			"cmd_template": [
+				"ldd",
+				"{target}"
+			],
+			"executable": "/lib/ld-musl-x86_64.so.1"
+		}
+	}
+]
