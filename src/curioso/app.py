@@ -76,26 +76,26 @@ class LibcInfo:
         """Detect libc family and version."""
         linkers = cls.find_dynamic_linkers()
         sel_linker = linkers[0] if linkers else None
-        fam, ver = platform.libc_ver()
+        libc_family, libc_version = platform.libc_ver()
 
-        if fam == "glibc" or not sel_linker:
+        if libc_family == "glibc" or not sel_linker:
             return cls(
-                family=fam,
-                version=ver,
+                family=libc_family,
+                version=libc_version,
                 selected_linker=sel_linker,
                 detector="platform.libc_ver",
             )
         else:
             out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
             combined = (out.decode() + "\n" + err.decode()).strip().lower()
-            version = next(
+            libc_version = next(
                 line.strip().split()[1]
                 for line in combined.splitlines()
                 if line.startswith("version")
             )
             return cls(
                 family="musl",
-                version=version,
+                version=libc_version,
                 selected_linker=sel_linker,
                 detector="ld --version",
             )
@@ -107,6 +107,7 @@ class DepInfo:
 
     method: str | None = None
     cmd_template: list[str] | None = None
+    argv: list[str] | None = None
     executable: str | None = None
 
     def __json__(self) -> dict[str, str | list[str] | None]:
@@ -114,6 +115,7 @@ class DepInfo:
         return {
             "method": self.method,
             "cmd_template": self.cmd_template,
+            "argv": self.argv,
             "executable": self.executable,
         }
 
@@ -129,7 +131,7 @@ class DepInfo:
         if libc_family == "musl" and linker:
             return cls(
                 method="musl-ld-argv0-ldd",
-                cmd_template=["ldd", "{target}"],
+                argv=["ldd", "{target}"],
                 executable=linker,
             )
 
