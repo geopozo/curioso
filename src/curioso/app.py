@@ -58,15 +58,15 @@ class LibcInfo:
     @staticmethod
     def find_dynamic_linkers() -> list[str]:
         """Find dynamic linkers in standard locations."""
-        found = {
-            p
-            for pat in PATTERNS
-            for p in glob.glob(pat)  # noqa: PTH207
-            if Path(p).is_file() and os.access(p, os.X_OK)
+        linkers = {
+            file
+            for pattern in PATTERNS
+            for file in glob.glob(pattern)  # noqa: PTH207
+            if Path(file).is_file() and os.access(file, os.X_OK)
         }
 
         mach = platform.machine()
-        (sorted_list := list(found)).sort(
+        (sorted_list := list(linkers)).sort(
             key=lambda x: (0 if mach and mach in x else 1, len(x)),
         )
 
