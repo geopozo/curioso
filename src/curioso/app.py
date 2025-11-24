@@ -58,35 +58,35 @@ class LibcInfo:
     @staticmethod
     def find_dynamic_linkers() -> list[str]:
         """Find dynamic linkers in standard locations."""
-        linkers = list({
+        if not (linkers := list({
             file
             for pattern in PATTERNS
             for file in glob.glob(pattern)  # noqa: PTH207
             if Path(file).is_file() and os.access(file, os.X_OK)
-        })
+        })):
+            return None
 
         linkers.sort(
             key=lambda linker: platform.machine() not in linker # True becomes 0
         )
 
-        return linkers
+        return linkers[0]
 
     @classmethod
     async def detect_libc(cls) -> LibcInfo:
         """Detect libc family and version."""
-        linkers = cls.find_dynamic_linkers()
-        sel_linker = linkers[0] if linkers else None
+        linker_present = cls.find_dynamic_linkers()
         libc_family, libc_version = platform.libc_ver()
 
-        if libc_family == "glibc" or not sel_linker:
+        if libc_family == "glibc" or not linker_present: # if no linker...
             return cls(
                 family=libc_family,
                 version=libc_version,
-                selected_linker=sel_linker,
+                selected_linker=linker_present,
                 detector="platform.libc_ver",
             )
         else:
-            out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
+            out, err, _ = await _utils.run_cmd([linker_present, "--version"])
             combined = (out.decode() + "\n" + err.decode()).strip().lower()
             libc_version = next(
                 line.strip().split()[1]
@@ -96,7 +96,7 @@ class LibcInfo:
             return cls(
                 family="musl",
                 version=libc_version,
-                selected_linker=sel_linker,
+                selected_linker=linker_present,
                 detector="ld --version",
             )
 
