@@ -58,19 +58,18 @@ class LibcInfo:
     @staticmethod
     def find_dynamic_linkers() -> list[str]:
         """Find dynamic linkers in standard locations."""
-        linkers = {
+        linkers = list({
             file
             for pattern in PATTERNS
             for file in glob.glob(pattern)  # noqa: PTH207
             if Path(file).is_file() and os.access(file, os.X_OK)
-        }
+        })
 
-        mach = platform.machine()
-        (sorted_list := list(linkers)).sort(
-            key=lambda x: (0 if mach and mach in x else 1, len(x)),
+        linkers.sort(
+            key=lambda linker: platform.machine() not in linker # True becomes 0
         )
 
-        return sorted_list
+        return linkers
 
     @classmethod
     async def detect_libc(cls) -> LibcInfo:
