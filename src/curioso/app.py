@@ -107,7 +107,6 @@ class DepInfo:
     """Ldd detection info."""
 
     method: str | None = None
-    cmd_template: list[str] | None = None
     argv: list[str] | None = None
     executable: str | None = None
 
@@ -115,7 +114,6 @@ class DepInfo:
         """Convert to json."""
         return {
             "method": self.method,
-            "cmd_template": self.cmd_template,
             "argv": self.argv,
             "executable": self.executable,
         }
@@ -126,7 +124,8 @@ class DepInfo:
         if libc_family == "glibc" and linker:
             return cls(
                 method="glibc-ld--list",
-                cmd_template=[linker, "--list", "{target}"],
+                argv=[linker, "--list", "{target}"],
+                executable=linker,
             )
 
         if libc_family == "musl" and linker:
