@@ -1,5 +1,7 @@
 """."""
 
+from __future__ import annotations
+
 import glob
 import os
 import platform
@@ -72,7 +74,7 @@ class LibcInfo:
         return sorted_list
 
     @classmethod
-    async def detect_libc(cls) -> "LibcInfo":
+    async def detect_libc(cls) -> LibcInfo:
         """Detect libc family and version."""
         linkers = cls.find_dynamic_linkers()
         sel_linker = linkers[0] if linkers else None
@@ -120,7 +122,7 @@ class DepInfo:
         }
 
     @classmethod
-    def ldd_equivalent(cls, libc_family: str, linker: str | None) -> "DepInfo":
+    def ldd_equivalent(cls, libc_family: str, linker: str | None) -> DepInfo:
         """Detect ldd equivalent command."""
         if libc_family == "glibc" and linker:
             return cls(
@@ -189,7 +191,7 @@ class ReportInfo:
         raise FileNotFoundError("No package manager found")
 
     @classmethod
-    async def probe(cls) -> "ReportInfo":
+    async def probe(cls) -> ReportInfo:
         """Detect system configuration and runtime environment."""
         os_name = platform.system()
         supported = os_name.lower() == "linux"
