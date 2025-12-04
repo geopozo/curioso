@@ -1,0 +1,66 @@
+[py312_trixie]
+command = "uv run curioso"
+os_name = "python:3.12-slim-trixie"
+os_commands = []
+pkg_manager = "apt"
+
+[py311_slim]
+command = "uv run curioso"
+os_name = "python:3.11-slim"
+os_commands = []
+pkg_manager = "apt"
+
+[py310_slim]
+command = "uv run curioso"
+os_name = "python:3.10-slim"
+os_commands = []
+pkg_manager = "apt"
+
+[debian_bookworm]
+command = "uv run curioso"
+os_name = "debian:bookworm-slim"
+os_commands = ["apt-get update && apt-get install -y ca-certificates"]
+pkg_manager = "apt"
+
+[debian_bullseye]
+command = "uv run curioso"
+os_name = "debian:bullseye-slim"
+os_commands = ["apt-get update && apt-get install -y ca-certificates"]
+pkg_manager = "apt"
+
+[ubuntu_latest]
+command = "uv run curioso"
+os_name = "ubuntu:latest"
+os_commands = ["apt-get update && apt-get install -y ca-certificates"]
+pkg_manager = "apt"
+
+[ubuntu_20]
+command = "uv run curioso"
+os_name = "ubuntu:20.04"
+os_commands = ["apt-get update && apt-get install -y ca-certificates"]
+pkg_manager = "apt"
+
+[ubuntu_22]
+command = "uv run curioso"
+os_name = "ubuntu:22.04"
+os_commands = []
+pkg_manager = "apt"
+
+[alpine_latest]
+command = "uv run curioso"
+os_name = "alpine:latest"
+os_commands = []
+pkg_manager = "apk"
+
+[alpine_3_18]
+command = "uv run curioso"
+os_name = "alpine:3.19"
+os_commands = []
+pkg_manager = "apk"
+
+
+[alpine_3_17]
+command = "uv run curioso"
+os_name = "alpine:3.17"
+os_commands = []
+pkg_manager = "apk"
