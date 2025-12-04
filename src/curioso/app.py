@@ -57,38 +57,41 @@ class LibcInfo:
         }
 
     @staticmethod
-    def find_dynamic_linkers() -> list[str]:
+    def find_dynamic_linkers() -> str | None:
         """Find dynamic linkers in standard locations."""
-        found = {
-            p
-            for pat in PATTERNS
-            for p in glob.glob(pat)  # noqa: PTH207
-            if Path(p).is_file() and os.access(p, os.X_OK)
-        }
+        if not (
+            linkers := list(
+                {
+                    file
+                    for pattern in PATTERNS
+                    for file in glob.glob(pattern)  # noqa: PTH207
+                    if Path(file).is_file() and os.access(file, os.X_OK)
+                },
+            )
+        ):
+            return None
 
-        mach = platform.machine()
-        (sorted_list := list(found)).sort(
-            key=lambda x: (0 if mach and mach in x else 1, len(x)),
+        linkers.sort(
+            key=lambda linker: platform.machine() not in linker,  # True becomes 0
         )
 
-        return sorted_list
+        return linkers[0]
 
     @classmethod
     async def detect_libc(cls) -> LibcInfo:
         """Detect libc family and version."""
-        linkers = cls.find_dynamic_linkers()
-        sel_linker = linkers[0] if linkers else None
+        linker_present = cls.find_dynamic_linkers()
         libc_family, libc_version = platform.libc_ver()
 
-        if libc_family == "glibc" or not sel_linker:
+        if libc_family == "glibc" or not linker_present:
             return cls(
                 family=libc_family,
                 version=libc_version,
-                selected_linker=sel_linker,
+                selected_linker=linker_present,
                 detector="platform.libc_ver",
             )
         else:
-            out, err, _ = await _utils.run_cmd([sel_linker, "--version"])
+            out, err, _ = await _utils.run_cmd([linker_present, "--version"])
             combined = (out.decode() + "\n" + err.decode()).strip().lower()
             libc_version = next(
                 line.strip().split()[1]
@@ -98,7 +101,7 @@ class LibcInfo:
             return cls(
                 family="musl",
                 version=libc_version,
-                selected_linker=sel_linker,
+                selected_linker=linker_present,
                 detector="ld --version",
             )
 
@@ -108,7 +111,6 @@ class LddInfo:
     """Ldd detection info."""
 
     method: str | None = None
-    cmd_template: list[str] | None = None
     argv: list[str] | None = None
     executable: str | None = None
 
@@ -116,7 +118,6 @@ class LddInfo:
         """Convert to json."""
         return {
             "method": self.method,
-            "cmd_template": self.cmd_template,
             "argv": self.argv,
             "executable": self.executable,
         }
@@ -127,7 +128,8 @@ class LddInfo:
         if libc_family == "glibc" and linker:
             return cls(
                 method="glibc-ld--list",
-                cmd_template=[linker, "--list", "{target}"],
+                argv=[linker, "--list", "{target}"],
+                executable=linker,
             )
 
         if libc_family == "musl" and linker:
