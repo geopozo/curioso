@@ -104,7 +104,7 @@ class LibcInfo:
 
 
 @dataclass
-class DepInfo:
+class LddInfo:
     """Ldd detection info."""
 
     method: str | None = None
@@ -122,7 +122,7 @@ class DepInfo:
         }
 
     @classmethod
-    def ldd_equivalent(cls, libc_family: str, linker: str | None) -> DepInfo:
+    def infer(cls, libc_family: str, linker: str | None) -> LddInfo:
         """Detect ldd equivalent command."""
         if libc_family == "glibc" and linker:
             return cls(
@@ -152,7 +152,7 @@ class ReportInfo:
     distro: dict[str, Any] | None = None
     package_manager: dict[str, Any] | None = None
     libc: LibcInfo | None = None
-    ldd_equivalent: DepInfo | None = None
+    ldd_info: LddInfo | None = None
 
     def __json__(self) -> dict[str, Any]:
         """Convert to json."""
@@ -165,7 +165,7 @@ class ReportInfo:
             "distro": self.distro,
             "package_manager": self.package_manager,
             "libc": self.libc,
-            "ldd": self.ldd_equivalent,
+            "ldd": self.ldd_info,
         }
 
     @staticmethod
@@ -216,7 +216,7 @@ class ReportInfo:
         report.sandbox = cls.detect_sandbox()
         report.package_manager = cls.choose_package_manager()
         report.libc = await LibcInfo.detect_libc()
-        report.ldd_equivalent = DepInfo.ldd_equivalent(
+        report.ldd_info = LddInfo.infer(
             report.libc.family,
             report.libc.selected_linker,
         )
