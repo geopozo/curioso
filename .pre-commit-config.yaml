@@ -80,3 +80,15 @@ repos:
         language: python
         entry: detect-secrets-hook
         args: [""]
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.0.173  # Use the latest release tag
+    hooks:
+      - id: rumdl
+        # To only check (default):
+        # args: []
+        # To automatically fix issues:
+        # args: [--fix]
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.407   # pin a tag; latest as of 2025-10-01
+    hooks:
+      - id: pyright
