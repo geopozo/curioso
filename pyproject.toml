@@ -56,4 +56,6 @@ ignore = [
 ]
 
 [tool.pyright]
-include = ["src/curioso"]
+venvPath = "."
+venv = ".venv"
+include = ["src", "tests"]
