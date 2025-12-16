@@ -88,7 +88,7 @@ class LibcInfo:
                 family=libc_family,
                 version=libc_version,
                 selected_linker=linker_present,
-                detector="platform.libc_ver",
+                detector="platform.libc_ver" if linker_present else "unknown",
             )
         else:
             out, err, _ = await _utils.run_cmd([linker_present, "--version"])
