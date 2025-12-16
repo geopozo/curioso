@@ -7,7 +7,7 @@ from curioso.app import ReportInfo
 # ruff: noqa: T201 allow print in CLI
 
 
-async def main():
+async def main() -> None:
     data = await ReportInfo.probe()
     print(
         json.dumps(
@@ -19,5 +19,5 @@ async def main():
     )
 
 
-def run_cli():
+def run_cli() -> None:
     asyncio.run(main())
