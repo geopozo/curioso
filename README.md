@@ -2,22 +2,23 @@
 
 ## Overview
 
-Curioso is a python api, CLI, for detecting operating system information and reporting in a JSON format.
+Curioso is a python api, CLI, for detecting operating system information and
+reporting in a JSON format.
 
 ### How to Install
 
 ```shell
-$ uv add git+https://github.com/geopozo/curioso
+uv add git+https://github.com/geopozo/curioso
 # or
-$ pip install git+https://github.com/geopozo/curioso
+pip install git+https://github.com/geopozo/curioso
 ```
 
 ## Usage
 
 ```shell
-$ uv run curioso
+uv run curioso
 # or
-$ python -m curioso
+python -m curioso
 ```
 
 ## Python API
