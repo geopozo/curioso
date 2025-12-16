@@ -7,9 +7,13 @@ import os
 import platform
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 from curioso import _utils
+
+if TYPE_CHECKING:
+    from typing import Any
+
 
 PKG_BINARIES = [
     "apt",
