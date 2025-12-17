@@ -19,12 +19,13 @@ authors = [
     { name = "David Angarita", email = "davidangarita.sistemas@gmail.com" },
 ]
 maintainers = [{ name = "Andrew Pikul", email = "ajpikul@gmail.com" }]
-dependencies = []
+dependencies = ["packaging>=25.0"]
+
+[project.scripts]
+curioso = "curioso._cli:run_cli"
 
 [dependency-groups]
-dev = [
-    "pyright>=1.1.407",
-]
+dev = ["ipdb>=0.13.13", "pyright>=1.1.407", "pytest>=9.0.1"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -49,10 +50,15 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-  "D",      # ignore docstring errors
-  "S101",   # allow assert
-  "INP001", # no need for __init__ in test directories
+    "D",      # ignore docstring errors
+    "S101",   # allow assert
+    "INP001", # no need for __init__ in test directories
 ]
 
 [tool.pyright]
-include = ["src/curioso"]
+venvPath = "."
+venv = ".venv"
+include = ["src", "tests"]
+
+[tool.rumdl]
+disable = ["MD046"]
