@@ -34,10 +34,9 @@ python -m curioso
 ## Python API
 
 ```python
-import curioso
+from curioso import ReportInfo
 
-report = curioso.probe()
-print(report)
+report = await ReportInfo.probe()
 ```
 
 ## License
