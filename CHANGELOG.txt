@@ -1,2 +1,2 @@
-v0.1.0
-- Commit first drag
+v1.0.0rc0
+- Implemented basic functionality
