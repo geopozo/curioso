@@ -1,5 +1,15 @@
 # Curioso
 
+<h1
+  align="center"
+>
+	  <img
+        height="250"
+        width="250"
+        alt="curioso_small"
+        src="https://raw.githubusercontent.com/geopozo/curioso/main/docs/media/logo.png">
+</h1>
+
 ## Overview
 
 Curioso is a python api, CLI, for detecting operating system information and
@@ -8,9 +18,9 @@ reporting in a JSON format.
 ### How to Install
 
 ```shell
-uv add git+https://github.com/geopozo/curioso
+uv add curioso
 # or
-pip install git+https://github.com/geopozo/curioso
+pip install curioso
 ```
 
 ## Usage
